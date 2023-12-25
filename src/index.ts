@@ -671,7 +671,7 @@ function transformClass(
   bodyNode.body.splice(0, 0, ...preamble);
   // recast is not smart enough to correctly pretty-print type parameters for arrow functions.
   // so we fall back to functions when type parameters are present.
-  const functionNeeded = analysis.isPure || !!analysis.typeParameters;
+  const functionNeeded = !!analysis.typeParameters;
   const params = needsProps(analysis)
     ? [
         assignTypeAnnotation(
@@ -701,7 +701,7 @@ function transformClass(
         ])
       )
     : undefined;
-  let funcNode: Expression = assignTypeParameters(
+  const funcNode: Expression = assignTypeParameters(
     assignReturnType(
       functionNeeded
         ? t.functionExpression(
@@ -714,12 +714,6 @@ function transformClass(
     ),
     analysis.typeParameters?.node
   );
-  if (analysis.isPure) {
-    funcNode = t.callExpression(
-      getReactImport("memo", babel, analysis.superClassRef),
-      [funcNode]
-    );
-  }
   return {
     funcNode,
     typeNode:

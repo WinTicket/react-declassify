@@ -203,7 +203,7 @@ describe("react-declassify", () => {
       `;
       const output = dedent`\
         import React from "react";
-        const C = React.memo(function C() {});
+        const C = () => {};
       `;
       expect(transform(input)).toBe(output);
     });
@@ -1236,22 +1236,6 @@ describe("react-declassify", () => {
   });
 
   describe("Memoization", () => {
-    it("transforms PureComponent to React.memo", () => {
-      const input = dedent`\
-        class C extends React.PureComponent {
-          render() {
-            return <div>Hello, world!</div>;
-          }
-        }
-      `;
-      const output = dedent`\
-        const C = React.memo(function C() {
-          return <div>Hello, world!</div>;
-        });
-      `;
-      expect(transform(input)).toBe(output);
-    });
-
     it("Places types on const", () => {
       const input = dedent`\
         class C extends React.PureComponent {
@@ -1261,9 +1245,9 @@ describe("react-declassify", () => {
         }
       `;
       const output = dedent`\
-        const C: React.FC = React.memo(function C() {
+        const C: React.FC = () => {
           return <div>Hello, world!</div>;
-        });
+        };
       `;
       expect(transform(input, { ts: true })).toBe(output);
     });
