@@ -763,18 +763,24 @@ function getReactImport(
       t.identifier(name)
     );
   }
-  if (superClassRef.kind === "ns") {
-    return t.memberExpression(
-      t.identifier(superClassRef.specPath.node.local.name),
-      t.identifier(name)
-    );
+
+  // NOTE: FCの時は React.FC, それ以外の useState などに関しては named import したい
+  if (name === "FC") {
+    if (superClassRef.kind === "ns") {
+      return t.memberExpression(
+        t.identifier(superClassRef.specPath.node.local.name),
+        t.identifier(name)
+      );
+    }
   }
+
   const decl = superClassRef.specPath.parentPath as NodePath<ImportDeclaration>;
   for (const spec of decl.get("specifiers")) {
     if (spec.isImportSpecifier() && importName(spec.node.imported) === name) {
       return t.cloneNode(spec.node.local);
     }
   }
+
   // No existing decl
   const newName = decl.scope.getBinding(name)
     ? decl.scope.generateUid(name)

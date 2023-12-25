@@ -1349,7 +1349,7 @@ describe("react-declassify", () => {
       }
     `;
     const output = dedent`\
-      import React from "react";
+      import React, { useState } from "react";
 
       type Props = {
         by?: number | undefined
@@ -1364,7 +1364,7 @@ describe("react-declassify", () => {
           by = 1
         } = props;
 
-        const [counter, setCounter] = React.useState<number>(0);
+        const [counter, setCounter] = useState<number>(0);
 
         function onClick() {
           setCounter(counter + by);
